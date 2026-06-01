@@ -28,7 +28,7 @@ Rules:
 - Return only the script. No title, no intro, no explanation.`;
   try {
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions',
+      'https://router.huggingface.co/novita/v3/openai/chat/completions',
       {
         method: 'POST',
         headers: {
@@ -36,7 +36,7 @@ Rules:
           'Authorization': `Bearer ${process.env.HF_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'mistralai/Mistral-7B-Instruct-v0.3',
+        model: 'mistralai/mistral-7b-instruct',
           messages: [{ role: 'user', content: prompt }],
           max_tokens: 500,
           temperature: 0.7
