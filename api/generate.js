@@ -47,7 +47,7 @@ const script = data.content?.[0]?.text?.trim();
       return res.status(500).json({ error: 'No script generated. Try again.' });
     }
     return res.status(200).json({ script });
-  } catch (error) {
-    return res.status(500).json({ error: 'Something went wrong. Try again.' });
+ } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 }
