@@ -41,7 +41,8 @@ Rules:
       })
     });
     const data = await response.json();
-    const script = data.content?.[0]?.text?.trim();
+  console.log('API response:', JSON.stringify(data));
+const script = data.content?.[0]?.text?.trim();
     if (!script) {
       return res.status(500).json({ error: 'No script generated. Try again.' });
     }
