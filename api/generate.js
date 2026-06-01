@@ -27,23 +27,32 @@ Rules:
 - Use [name] for the person's name
 - Return only the script. No title, no intro, no explanation.`;
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-    model: 'claude-haiku-4-5',
-        max_tokens: 500,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const response = await fetch(
+      'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.HF_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'mistralai/Mistral-7B-Instruct-v0.3',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 500,
+          temperature: 0.7
+        })
+      }
+    );
     const data = await response.json();
-  console.log('API response:', JSON.stringify(data));
-return res.status(200).json({ script: JSON.stringify(data) });
- } catch (error) {
+    if (data.error) {
+      return res.status(500).json({ error: JSON.stringify(data.error) });
+    }
+    const script = data.choices?.[0]?.message?.content?.trim();
+    if (!script) {
+      return res.status(500).json({ error: 'No script generated. Try again.' });
+    }
+    return res.status(200).json({ script });
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 }
