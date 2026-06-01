@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Script Builder</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    h1 { font-size: 24px; }
+    label { display: block; margin-top: 16px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 6px; font-size: 14px; }
+    button { margin-top: 20px; padding: 12px 24px; background: #000; color: #fff; border: none; cursor: pointer; font-size: 16px; }
+    #result { margin-top: 30px; white-space: pre-wrap; background: #f4f4f4; padding: 16px; }
+    #error { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Script Builder</h1>
+  <label>Conversation Type</label>
+  <input type="text" id="convType" placeholder="e.g. performance review" />
+  <label>Who are you talking to?</label>
+  <input type="text" id="who" placeholder="e.g. direct report" />
+  <label>What happened?</label>
+  <textarea id="what" rows="3" placeholder="Describe the issue"></textarea>
+  <label>What needs to happen by the end?</label>
+  <input type="text" id="outcome" placeholder="e.g. agreement on next steps" />
+  <button onclick="generate()">Generate Script</button>
+  <div id="error"></div>
+  <div id="result"></div>
+  <script>
+    async function generate() {
+      const convType = document.getElementById('convType').value;
+      const who = document.getElementById('who').value;
+      const what = document.getElementById('what').value;
+      const outcome = document.getElementById('outcome').value;
+      document.getElementById('error').innerText = '';
+      document.getElementById('result').innerText = 'Generating...';
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ convType, who, what, outcome })
+      });
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById('error').innerText = data.error;
+        document.getElementById('result').innerText = '';
+      } else {
+        document.getElementById('result').innerText = data.script;
+      }
+    }
+  </script>
+</body>
+</html>
