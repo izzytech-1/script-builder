@@ -42,11 +42,7 @@ Rules:
     });
     const data = await response.json();
   console.log('API response:', JSON.stringify(data));
-const script = data.content?.[0]?.text?.trim();
-    if (!script) {
-      return res.status(500).json({ error: 'No script generated. Try again.' });
-    }
-    return res.status(200).json({ script });
+return res.status(200).json({ script: JSON.stringify(data) });
  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
