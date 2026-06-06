@@ -28,19 +28,12 @@ Rules:
 - Return only the script. No title, no intro, no explanation.`;
   try {
     const response = await fetch(
-      'https://api-inference.huggingface.co/v1/chat/completions',
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.HF_API_KEY}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'mistralai/Mistral-7B-Instruct-v0.3',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 500,
-          temperature: 0.7,
-          stream: false
+          contents: [{ parts: [{ text: prompt }] }]
         })
       }
     );
@@ -48,7 +41,7 @@ Rules:
     if (data.error) {
       return res.status(500).json({ error: JSON.stringify(data.error) });
     }
-    const script = data.choices?.[0]?.message?.content?.trim();
+    const script = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
     if (!script) {
       return res.status(500).json({ error: JSON.stringify(data) });
     }
